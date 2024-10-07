@@ -39,13 +39,6 @@ def generate_launch_description():
         }.items(),
     )
 
-    # RViz
-    rviz = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=['-d', os.path.join(pkg_ros_gz_sim_demos, 'rviz', 'diff_drive.rviz')],
-       condition=IfCondition(LaunchConfiguration('rviz'))
-    )
 
     # Bridge
     bridge = Node(
@@ -62,8 +55,5 @@ def generate_launch_description():
 
     return LaunchDescription([
         gz_sim,
-        DeclareLaunchArgument('rviz', default_value='true',
-                              description='Open RViz.'),
-        bridge,
-        rviz
+        bridge
     ])
