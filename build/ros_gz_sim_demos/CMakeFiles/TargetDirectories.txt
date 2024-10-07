@@ -1,0 +1,9 @@
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/uninstall.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/ros_gz_sim_demos_uninstall.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/test.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/edit_cache.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/rebuild_cache.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/list_install_components.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/install.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/install/local.dir
+/home/rom1/ros_gz_sim_demos/build/ros_gz_sim_demos/CMakeFiles/install/strip.dir
