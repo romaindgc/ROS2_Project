@@ -1,5 +1,5 @@
 <package format="3">
-  <name>ros_gz_sim_demos</name>
+  <name>ros2_mcar</name>
   <version>2.1.0</version>
   <description>Demos using Gazebo Sim simulation with ROS.</description>
   <license>Apache 2.0</license>

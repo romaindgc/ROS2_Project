@@ -42,8 +42,14 @@ git clone https://github.com/romaindgc/ROS2_Project.git
 Go inside the project folder *ros_gz_sim_demos* with the following command :  
 
 ```cpp
- cd ~\ros_gz_sim_demos
+ cd ~\ROS2_Project
 ``` 
+
+Rebuild the project to be sure :
+
+```cpp
+ colcon build
+```
 
 Next, enter this command : 
 
@@ -51,16 +57,10 @@ Next, enter this command :
  source install/setup.bash
 ```
 
- You can also rebuild the project to be sure :
-
-```cpp
- colcon build
-```
-
  Finally, run the following command :
 
 ```cpp
- ros2 launch ros_gz_sim_demos diff_drive.launch.py
+ ros2 launch ros2_mcar diff_drive.launch.py
 ```
 
  ## Put your updates on GitHub 
@@ -133,7 +133,7 @@ Fist, navigate to the local repository.
 If you put it at your *root*, it should be located there : 
 
 ```cpp
-cd ~/ros_gz_sim_demos
+cd ~/ROS2_Project
 ```
 
 ### Pull the changes
