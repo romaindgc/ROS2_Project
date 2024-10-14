@@ -22,7 +22,7 @@ git --version
 Here, we use the HTTPS link.  
 Find here the link of the project :  
 ```cpp
- https://github.com/Lumarochoco/ROS2_Project.git
+ https://github.com/romaindgc/ROS2_Project.git
 ```
  Next, thanks to your terminal, go where you want to put the folder.  
  For example, it can be at your *root*, use the next command to go there :  
@@ -34,7 +34,7 @@ Find here the link of the project :
 Then, use the following command for cloning the repository in your machine :
 
 ```cpp
-git clone https://github.com/Lumarochoco/ROS2_Project.git
+git clone https://github.com/romaindgc/ROS2_Project.git
 ```
 
 ## Run the project
