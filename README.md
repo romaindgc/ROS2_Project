@@ -1,208 +1,153 @@
-# ROS + Gazebo Sim demos
+# ROS2 Project
 
-This package contains demos showing how to use Gazebo Sim with ROS.
+## Install Git
 
-## Run Gazebo Sim
+To check if you have git, check the version with the following command :  
+```cpp
+git --version
+```
+ If no message is written, then you need to install git.  
+ For that, start by the following command :  
+```cpp
+ sudo apt update  
+```
+ Then :  
+```cpp
+ sudo apt install git  
+```
+ You can check if git is well installed by checking the version like we did in a first time.
 
-There's a convenient launch file, try for example:
+## Get the project from Github / Clone the project
 
-    ros2 launch ros_gz_sim gz_sim.launch.py gz_args:="shapes.sdf"
+Here, we use the HTTPS link.  
+Find here the link of the project :  
+```cpp
+ https://github.com/romaindgc/ROS2_Project.git
+```
+ Next, thanks to your terminal, go where you want to put the folder.  
+ For example, it can be at your *root*, use the next command to go there :  
+ 
+```cpp
+ cd
+```
 
-![](images/shapes_demo.png)
+Then, use the following command for cloning the repository in your machine :
 
-## Air pressure
+```cpp
+git clone https://github.com/romaindgc/ROS2_Project.git
+```
 
-Publishes fluid pressure readings.
+## Run the project
 
-    ros2 launch ros_gz_sim_demos air_pressure.launch.py
+Go inside the project folder *ros_gz_sim_demos* with the following command :  
 
-This demo also shows the use of custom QoS parameters. The sensor data is
-published as as "best-effort", so trying to subscribe to "reliable" data won't
-work. See the difference between:
+```cpp
+ cd ~\ros_gz_sim_demos
+``` 
 
-    ros2 topic echo /air_pressure --qos-reliability best_effort
+Next, enter this command : 
 
-And
+```cpp
+ source install/setup.bash
+```
 
-    ros2 topic echo /air_pressure --qos-reliability reliable
+ You can also rebuild the project to be sure :
 
-![](images/air_pressure_demo.png)
+```cpp
+ colcon build
+```
 
-## Camera
+ Finally, run the following command :
 
-Publishes RGB camera image and info.
+```cpp
+ ros2 launch ros_gz_sim_demos diff_drive.launch.py
+```
 
-Images can be exposed to ROS through `ros_gz_bridge` or `ros_gz_image`.
+ ## Put your updates on GitHub 
 
-Using the image bridge (unidirectional, uses [image_transport](http://wiki.ros.org/image_transport)):
+ ### Token
 
-    ros2 launch ros_gz_sim_demos image_bridge.launch.py
+ If you have already created a token, you can directly go to the next step.  
+ Hence, go to this website for creating a new github token (classic) :  
 
-Using the regular bridge:
+ > https://github.com/settings/tokens
 
-    ros2 launch ros_gz_sim_demos camera.launch.py
+### Configur Git
 
-To use a camera that only publishes information when triggered:
+If you’ve never configured Git on your machine, start by setting your name and email (which will be attached to your commits). Use these commands in the terminal :
 
-    ros2 launch ros_gz_sim_demos triggered_camera.launch.py
+```cpp
+git config --global user.name "Your Name"
+```
+```cpp
+git config --global user.email "youremail@example.com"
+```
 
-Trigger the camera:
+### Check for changes
 
-    ros2 topic pub /camera/trigger std_msgs/msg/Bool "{data: true}" --once
+Before pushing your changes, check which files have been modified using : 
 
-![](images/camera_demo.png)
+```cpp
+git status
+```
 
-## Diff drive
+You can also use this command to see the progression in the *pushing process*.  
 
-Send commands to a differential drive vehicle and listen to its odometry.
+### Add changes to the staging area  
 
-    ros2 launch ros_gz_sim_demos diff_drive.launch.py
+You need to add the modified or created files to the staging area before commiting :
 
-Then unpause and send a command
+* To add all changed files : 
+```cpp
+ git add .
+```
+* To add specific files :
+ ```cpp
+ git add *path/namefile*
+```
 
-    ros2 topic pub /model/vehicle_blue/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 5.0}, angular: {z: 0.5}}"
+### Commit the changes
 
-This demo also shows the use of custom QoS parameters. The commands are
-subscribed to as "reliable", so trying to publish "best-effort" commands
-won't work. See the difference between:
+Once files are added to the staging area, create a commit to save the changes with a descriptive message:  
 
-    ros2 topic pub /model/vehicle_blue/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 5.0}, angular: {z: 0.0}}" --qos-reliability reliable
+```cpp
+git commit -m "Description of your changes"
+```
 
-And
+### Push the changes to GitHub
 
-    ros2 topic pub /model/vehicle_blue/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 5.0}, angular: {z: 0.0}}" --qos-reliability best_effort
+Finally, push the changes to the remote repository on GitHub using :
 
-![](images/diff_drive_demo.png)
+```cpp
+git push origin master
+```
 
-## Depth camera
+*In our case, **master** refers to the main branch of the repository. If you are working in another branc, replace **master** with 
+the appropriate branch name.*
 
-Depth camera data can be obtained as:
+## Import the lastest version / Pull the repository
 
-* `sensor_msgs/msg/Image`, through `ros_gz_bridge` or `ros_gz_image`
-* `sensor_msgs/msg/PointCloud2`, through `ros_gz_point_cloud`
+### Navigate to the local repository
 
-Using the image bridge (unidirectional, uses [image_transport](http://wiki.ros.org/image_transport)):
+Fist, navigate to the local repository.  
+If you put it at your *root*, it should be located there : 
 
-    ros2 launch ros_gz_sim_demos image_bridge.launch.py image_topic:=/depth_camera
+```cpp
+cd ~/ros_gz_sim_demos
+```
 
-*TODO*: Blocked by `ros_gz_point_cloud` [issue](https://github.com/gazebosim/ros_gz/issues/40).
+### Pull the changes
 
-Using Gazebo Sim plugin:
+Use the following command to pull the latest changes from the remote repository to your local repository :
 
-    ros2 launch ros_gz_sim_demos depth_camera.launch.py
+```cpp
+git pull origin master
+```
 
-![](images/depth_camera_demo.png)
+*In our case, **master** is the default name for the remote repository.*
 
-## GPU lidar
+### Resolve conflits (if any)
 
-GPU lidar data can be obtained as:
+If there are changes both in your local repository and on GitHub, there might be merge conflicts. Git will notify you if there are any, and you will need to manually resolve them before completing the pull.  
 
-* `sensor_msgs/msg/LaserScan`, through the `ros_gz_bridge`
-* `sensor_msgs/msg/PointCloud2`, through the `ros_gz_bridge` or `ros_gz_point_cloud`
-
-Using the bridge:
-
-    ros2 launch ros_gz_sim_demos gpu_lidar_bridge.launch.py
-
-*TODO*: Blocked by `ros_gz_point_cloud` [issue](https://github.com/gazebosim/ros_gz/issues/40).
-
-Using Gazebo Sim plugin:
-
-    ros2 launch ros_gz_sim_demos gpu_lidar.launch.py
-
-![](images/gpu_lidar_demo.png)
-
-## IMU
-
-Publishes IMU readings.
-
-    ros2 launch ros_gz_sim_demos imu.launch.py
-
-![](images/imu_demo.png)
-
-*TODO*: IMU display missing for RViz2
-
-## Magnetometer
-
-Publishes magnetic field readings.
-
-    ros2 launch ros_gz_sim_demos magnetometer.launch.py
-
-![](images/magnetometer_demo.png)
-
-## GNSS
-
-Publishes satellite navigation readings, only available in Fortress on.
-
-    ros2 launch ros_gz_sim_demos navsat.launch.py
-
-![](images/navsat_demo.png)
-
-## RGBD camera
-
-RGBD camera data can be obtained as:
-
-* `sensor_msgs/msg/Image`, through `ros_gz_bridge` or `ros_gz_image`
-* `sensor_msgs/msg/PointCloud2`, through `ros_gz_bridge` or `ros_gz_point_cloud`
-
-Using the image bridge (unidirectional, uses [image_transport](http://wiki.ros.org/image_transport)):
-
-    # RGB image
-    ros2 launch ros_gz_sim_demos image_bridge.launch.py image_topic:=/rgbd_camera/image
-    # Depth image
-    ros2 launch ros_gz_sim_demos image_bridge.launch.py image_topic:=/rgbd_camera/depth_image
-
-Using the regular bridge:
-
-    ros2 launch ros_gz_sim_demos rgbd_camera_bridge.launch.py
-
-*TODO*: Blocked by `ros_gz_point_cloud` [issue](https://github.com/gazebosim/ros_gz/issues/40).
-
-Using Gazebo Sim plugin:
-
-    ros2 launch ros_gz_sim_demos rgbd_camera.launch.py
-
-![](images/rgbd_camera_demo.png)
-
-## Battery
-
-Get the current state of a battery.
-
-    ros2 launch ros_gz_sim_demos battery.launch.py
-
-Then send a command so the vehicle moves and drains the battery
-
-    ros2 topic pub /model/vehicle_blue/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 5.0}, angular: {z: 0.5}}"
-
-![](images/battery_demo.png)
-
-## Robot description publisher
-
-Leverage the robot description publisher to spawn a new urdf model in gazebo and
-show it in rviz2.
-To try the demo launch:
-
-    ros2 launch ros_gz_sim_demos robot_description_publisher.launch.py
-
-![](images/robot_state_publisher_demo.png)
-
-## Joint States Publisher
-
-Publishes joint states of the robot.
-
-To try the demo launch:
-
-    ros2 launch ros_gz_sim_demos joint_states.launch.py
-
-![](images/joint_states.png)
-
-## Bridging joint state and pose publishers
-
-The launch file demonstrates bridging Gazebo poses to TFMessage to visualize the pose
-and transforms of a robot in rviz.
-
-To try the demo launch:
-
-    ros2 launch ros_gz_sim_demos tf_bridge.launch.py
-
-![](images/tf_bridge.gif)
+Once you’ve resolved any conflicts, stage the changes, commit them, and finish the pull.
