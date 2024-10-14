@@ -1,0 +1,3 @@
+#Ignorer les dossiers Build et Install
+build/
+install/
