@@ -28,7 +28,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
 
-    pkg_ros_gz_sim_demos = get_package_share_directory('ros_gz_sim_demos')
+    #pkg_ros_gz_sim_demos = get_package_share_directory('ros_gz_sim_demos')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
     gz_sim = IncludeLaunchDescription(
