@@ -10,7 +10,7 @@ ros2 service call /spawn turtlesim/srv/Spawn "{x: 2, y: 2, theta: 0.2, name: 'tu
 ```
 
 ```cpp
-cd ~/ros2_ws/
+cd ~/ROS2_Project/commande/
 colcon build
 source install/setup.bash
 ros2 run package_turtleFormation node_cmdTurtle1
