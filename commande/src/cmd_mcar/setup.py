@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'test = cmd_mcar.test:main'
+            'test = cmd_mcar.test:main',
+            'cent_cmd = cmd_mcar.centered_cmd:main'
         ],
     },
 )
