@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'Follow = turtleFollower.Follow:main'
+            'Follow = turtleFollower.Follow:main',
+            'Followetat = turtleFollower.Follow_etat:main'
         ],
     },
 )
