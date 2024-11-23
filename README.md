@@ -1,5 +1,33 @@
 # ROS2 Project
 
+* Première partie avec des commandes utiles
+* Seconde partie sur Github
+
+# Useful commande
+
+### Lancer le projet 
+```bash
+ros2 launch ROS2_Project/launch/MCAR.launch.py 
+```
+
+### Sources le terminal
+```bash
+source ~/ROS2_Project/install/setup.bash
+```
+
+### Validation typo d'un fichier sdf
+```bash
+ign sdf -k diff_drive.sdf
+```
+
+### Démarrer Gazebo avec le fichier sdf
+```bash 
+ign gazebo diff_drive.sdf
+```
+
+
+# Git and Github
+
 ## Install Git
 
 To check if you have git, check the version with the following command :  
