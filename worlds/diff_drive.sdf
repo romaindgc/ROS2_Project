@@ -34,9 +34,14 @@
       filename="ignition-gazebo-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-
-
      
+     <!-- GUI Plugins -->
+    <gui>
+      <plugin name="KeyPublisher" filename="libKeyPublisher.so">
+        <!-- Optional: You can configure the topic here -->
+        <topic>/keyboard/keypress</topic>
+      </plugin>
+    </gui>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
@@ -248,18 +253,6 @@
       </joint>
 
       <plugin
-      filename="libignition-gazebo-keyboard-controller-system.so"
-      name="ignition::gazebo::systems::KeyboardController">
-      <linear_velocity_increment>0.5</linear_velocity_increment>
-      <angular_velocity_increment>0.5</angular_velocity_increment>
-      <min_linear_velocity>-1.0</min_linear_velocity>
-      <max_linear_velocity>1.0</max_linear_velocity>
-      <min_angular_velocity>-1.0</min_angular_velocity>
-      <max_angular_velocity>1.0</max_angular_velocity>
-      <topic>/model/vehicle_blue/cmd_vel</topic>
-    </plugin>
-
-      <plugin
         filename="ignition-gazebo-diff-drive-system"
         name="gz::sim::systems::DiffDrive">
         <left_joint>left_wheel_joint</left_joint>
@@ -466,7 +459,7 @@
 
     </model>
 
-     <!-- Moving Foward with the front arrow-->
+    <!-- Moving Foward with the front arrow-->
     <plugin filename = "libignition-gazebo-triggered-publisher-system.so"
             name = "ignition::gazebo::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
