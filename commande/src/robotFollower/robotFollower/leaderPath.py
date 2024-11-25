@@ -6,14 +6,16 @@ from nav_msgs.msg import Odometry
 import numpy as np
 import math
 
-class node_robotFollower(Node):
+class node_leaderPath(Node):
 
     def __init__(self):
         super().__init__('Follower')
 
         # Variables for the position
-        self.pose_turtle1 = [0, 0, 0, 0, 0]
-        self.pose_turtleFollower = [0, 0, 0, 0, 0]
+        self.pose_leader = [0, 0, 0, 0, 0]
+
+        #Varibles for the trajectory
+        self.trajectory = [[5,0],[5,-5],[-5,-5],[-5,0],[0,0]]
 
         # Variables for the PID
         self.error_distance = 0
@@ -34,39 +36,47 @@ class node_robotFollower(Node):
         self.Kd_angle = 0.2
 
         # Other parameters
-        self.FD = 2.5  # Target distance
+        self.indexTraj = 0
+        self.tolerance = 0.7 #For avoiding perpetual oscillations, we add a tolerance to our aimed distance
         self.timer_period = 0.1  # seconds
-        self.xOffset_follower = -4
 
         # Publishers and Subscriptions
-        self.pose_turtle1_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_callback_driver, 10)
-        self.pose_turtle_follower_sub = self.create_subscription(Odometry, "/model/vehicle_green/odometry", self.pose_callback_follower, 10)
-        self.cmd_vel_turtle_follower_pub_ = self.create_publisher(Twist, "/model/vehicle_green/cmd_vel", 10)
+        self.pose_leader_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_callback_leader, 10)
+        self.cmd_vel_leader_pub_ = self.create_publisher(Twist, "/model/vehicle_blue/cmd_vel", 10)
 
         self.timer_follow = self.create_timer(self.timer_period, self.followCommand)
-        self.get_logger().info("Shadowing started")
+        self.get_logger().info("Race started")
 
-    def pose_callback_driver(self, msg: Odometry):
-        quatertion_turtle1 = msg.pose.pose.orientation
-        angle_turtle1 = quaternion_to_yaw(quatertion_turtle1.x, quatertion_turtle1.y,quatertion_turtle1.z, quatertion_turtle1.w)
-        self.pose_turtle1 = [msg.pose.pose.position.x, msg.pose.pose.position.y, angle_turtle1]
-
-    def pose_callback_follower(self, msg: Odometry):
-        quatertion_turtleFollower = msg.pose.pose.orientation
-        angle_turtleFollower = quaternion_to_yaw(quatertion_turtleFollower.x, quatertion_turtleFollower.y, quatertion_turtleFollower.z, quatertion_turtleFollower.w)
-        self.pose_turtleFollower = [msg.pose.pose.position.x + self.xOffset_follower, msg.pose.pose.position.y, angle_turtleFollower]     
-
+    #Get the pose of the leader robot 
+    def pose_callback_leader(self, msg: Odometry):
+        quatertion_leader = msg.pose.pose.orientation
+        angle_leader = quaternion_to_yaw(quatertion_leader.x, quatertion_leader.y,quatertion_leader.z, quatertion_leader.w)
+        self.pose_leader = [msg.pose.pose.position.x, msg.pose.pose.position.y, angle_leader]
+   
+    #Send the velocity command to the leader robot
     def send_velocity_command(self, x, y, z):
         msg = Twist()
         msg.linear.x = float(x)
         msg.linear.y = float(y)
         msg.angular.z = float(z)
-        self.cmd_vel_turtle_follower_pub_.publish(msg)
+        self.cmd_vel_leader_pub_.publish(msg)
 
     def followCommand(self):
         # Calculate errors
-        self.error_distance = norme_euclidienne(self.pose_turtle1, self.pose_turtleFollower)
-        self.error_angle = np.arctan2(self.pose_turtle1[1] - self.pose_turtleFollower[1], self.pose_turtle1[0] - self.pose_turtleFollower[0]) - self.pose_turtleFollower[2]
+        self.error_distance = norme_euclidienne(self.trajectory[self.indexTraj], self.pose_leader)
+        self.error_angle = np.arctan2(self.trajectory[self.indexTraj][1]- self.pose_leader[1], self.trajectory[self.indexTraj][0] - self.pose_leader[0]) - self.pose_leader[2]
+
+        #Check if we reached the current point ie if it is neccesary to go to the next point
+        if self.error_distance < self.tolerance and  self.error_distance > - self.tolerance :
+            if self.indexTraj < len(self.trajectory)-1 :
+                #Check if we finished the circuit
+                self.indexTraj = self.indexTraj +1
+            else :
+                #If we ended the circuit we restart a lap 
+                self.indexTraj = 0
+            #We recompute the error with the new trajectory point
+            self.error_distance = norme_euclidienne(self.trajectory[self.indexTraj], self.pose_leader)
+            self.error_angle = np.arctan2(self.trajectory[self.indexTraj][1]- self.pose_leader[1], self.trajectory[self.indexTraj][0] - self.pose_leader[0]) - self.pose_leader[2]
         
         # Normalize angle in [-pi,pi] for ensuring that the turtle turns in the shortest sens
         self.error_angle = np.arctan2(np.sin(self.error_angle), np.cos(self.error_angle))
@@ -86,19 +96,17 @@ class node_robotFollower(Node):
         self.error_angle_previous = self.error_angle
 
         # Tolerance zone
-        tolerance = 0.1 #For avoiding perpetual oscillations, we add a tolerance to our aimed distance
-        if self.error_distance > self.FD + tolerance:
+        if self.error_distance > self.tolerance:
             self.send_velocity_command(linear_speed, 0, angle_speed)
-        elif self.error_distance < self.FD - tolerance:
+        elif self.error_distance < - self.tolerance:
             self.send_velocity_command(-linear_speed, 0, -angle_speed)
         else:
             self.send_velocity_command(0, 0, 0)
-        
+
         # Log pour débogage
-        self.get_logger().info(f"error : dis={self.error_distance:.2f}, angle={self.error_angle:.2f}")
+        self.get_logger().info(f"error: index={self.indexTraj:.2f}, error_distance={self.error_distance:.2f}, error_angle={self.error_angle:.2f}")
+        self.get_logger().info(f"Trajectoire : x={self.trajectory[self.indexTraj][0]:.2f}, y={self.trajectory[self.indexTraj][1]:.2f}")
         self.get_logger().info(f"Commande : v={linear_speed:.2f}, z={angle_speed:.2f}")
-        self.get_logger().info(f"Pose leader : x={self.pose_turtle1[0]:.2f}, y={self.pose_turtle1[1]:.2f}")
-        self.get_logger().info(f"Pose follower : x={self.pose_turtleFollower[0]:.2f}, y={self.pose_turtleFollower[1]:.2f}")
 
 
 def norme_euclidienne(a, b):
@@ -109,6 +117,6 @@ def quaternion_to_yaw(qx, qy, qz, qw):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = node_robotFollower()
+    node = node_leaderPath()
     rclpy.spin(node)
     rclpy.shutdown()

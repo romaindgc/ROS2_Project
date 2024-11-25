@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'robotFollower = robotFollower.robotFollower:main'
+            'robotFollower = robotFollower.robotFollower:main',
+            'robotLeader = robotFollower.leaderPath:main'
         ],
     },
 )

@@ -5,19 +5,19 @@ On définit que :
 * Le robot **follower** est le robot **vert**
 
 
-## Commande pour créer les bridges
+## Run the node for the leade 
 
-* Bridge pour le topic cmd_vel
 ```bash
-ros2 run ros_gz_bridge parameter_bridge /model/vehicle_green/cmd_vel@geometry_msgs/msg/Twist@gz.msgs.Twist
+cd ~/ROS2_Project/commande/
+colcon build
+source install/setup.bash
+ros2 run robotFollower robotLeader
 ```
 
-* Bridge pour le topic odometry (vehicle_blue)
+## Run the node for the follower
 ```bash
-ros2 run ros_gz_bridge parameter_bridge /model/vehicle_blue/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry
-```
-
-* Bridge pour le topic odometry (vehicle_green)
-```bash
-ros2 run ros_gz_bridge parameter_bridge /model/vehicle_green/odometry@nav_msgs/msg/Odometry@gz.msgs.Odometry
+cd ~/ROS2_Project/commande/
+colcon build
+source install/setup.bash
+ros2 run robotFollower robotFollower
 ```
