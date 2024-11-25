@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'node_cmdTurtle1 = package_turtleFormation.node_cmdTurtle1:main'
+            'node_cmdTurtle1 = package_turtleFormation.node_cmdTurtle1:main',
+            'node_follow_trajectoire = package_turtleFormation.node_follow_trajectoire:main'
         ],
     },
 )
