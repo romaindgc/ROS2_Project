@@ -1,11 +1,13 @@
 # Robot follower
 
-On définit que :
-* Le robot **leader** est le robot **bleu**
-* Le robot **follower** est le robot **vert**
+We have chosen that :
+* The **leader** is the **blue** robot
+* The **follower** is the **green** robot
 
 
-## Run the node for the leade 
+## Run the node for the leader 
+
+In one terminal : 
 
 ```bash
 cd ~/ROS2_Project/commande/
@@ -15,6 +17,9 @@ ros2 run robotFollower robotLeader
 ```
 
 ## Run the node for the follower
+
+In another one terminal : 
+
 ```bash
 cd ~/ROS2_Project/commande/
 colcon build
