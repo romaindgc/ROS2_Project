@@ -40,9 +40,6 @@ class node_follow_trajectoire(Node):
         self.timer_period = 0.1  # seconds
 
         # Publishers and Subscriptions
-        #self.pose_trajectoire_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_callback_driver, 10)
-        #self.pose_turtle_follower_sub = self.create_subscription(Odometry, "/model/vehicle_green/odometry", self.pose_callback_follower, 10)
-        #self.cmd_vel_turtle_follower_pub_ = self.create_publisher(Twist, "/model/vehicle_green/cmd_vel", 10)
         self.pose_turtle_follower_sub = self.create_subscription(Pose, "/turtleFollower/pose", self.pose_callback_follower, 10)
         self.cmd_vel_turtle_follower_pub_ = self.create_publisher(Twist, "/turtleFollower/cmd_vel", 10)
 
@@ -50,22 +47,11 @@ class node_follow_trajectoire(Node):
         self.get_logger().info("Shadowing started")
 
         #initialisation de la trajectoire
-        pose_init=self.pose_turtleFollower #vérifier que la pose init soit bien la pose actuel de turtle folower avant commencemant de la trajectoire
-        nombre_de_points=5
-        self.min_max=[[7.0,2.0],[7.0,2.0],[3.14,-3.14],[2.0,0.5],[2.0,0.5],]
+        self.min_max=[[7.0,2.0],[7.0,2.0],[3.14,-3.14],[2.0,0.5],[2.0,0.5]]
 
         self.pose_trajectoire=[[5,5,0,1,1],[5,5,0,1,1],[5,5,0,1,1],[5,5,0,1,1],[5,5,0,1,1]]
         self.indice_trajectoire=4
-
-    #def pose_callback_driver(self, msg: Odometry):
-    #    quatertion_turtle1 = msg.pose.pose.orientation
-    #    angle_turtle1 = quaternion_to_yaw(quatertion_turtle1.x, quatertion_turtle1.y,quatertion_turtle1.z, quatertion_turtle1.w)
-    #    self.pose_turtle1 = [msg.pose.pose.position.x, msg.pose.pose.position.y, angle_turtle1]
-
-    #def pose_callback_follower(self, msg: Odometry):
-    #    quatertion_turtleFollower = msg.pose.pose.orientation
-    #    angle_turtleFollower = quaternion_to_yaw(quatertion_turtleFollower.x, quatertion_turtleFollower.y, quatertion_turtleFollower.z, quatertion_turtleFollower.w)
-    #    self.pose_turtleFollower = [msg.pose.pose.position.x, msg.pose.pose.position.y, angle_turtleFollower]     
+ 
     def pose_callback_follower(self, pose: Pose):
         self.pose_turtleFollower = [pose.x, pose.y, pose.theta]
 
@@ -79,18 +65,15 @@ class node_follow_trajectoire(Node):
     def generate_trajectory(self):
         self.pose_trajectoire[0]=[self.pose_turtleFollower[0],self.pose_turtleFollower[1],self.pose_turtleFollower[2],0,0]
         for i in range(4):
-            self.pose_trajectoire[i+1][0]=random.uniform(self.min_max[0][0],self.min_max[0][1])
-            self.pose_trajectoire[i+1][1]=random.uniform(self.min_max[1][0],self.min_max[1][1])
-            self.pose_trajectoire[i+1][2]=random.uniform(self.min_max[2][0],self.min_max[2][1])
-            self.pose_trajectoire[i+1][3]=random.uniform(self.min_max[3][0],self.min_max[3][1])
-            self.pose_trajectoire[i+1][4]=random.uniform(self.min_max[4][0],self.min_max[4][1])
+            for j in range(5):
+                self.pose_trajectoire[i+1][j] = random.uniform(self.min_max[j][0],self.min_max[j][1])
 
     def followCommand(self):
         # Calculate errors
         self.error_distance = norme_euclidienne(self.pose_trajectoire[self.indice_trajectoire], self.pose_turtleFollower)
         self.error_angle = np.arctan2(self.pose_trajectoire[self.indice_trajectoire][1] - self.pose_turtleFollower[1], self.pose_trajectoire[self.indice_trajectoire][0] - self.pose_turtleFollower[0]) - self.pose_turtleFollower[2]
         
-        #Si on est suffisement proche du point sible alors on passe au point suivant si la trajectoire n'est pas fini sinon on en créer une nouvelle
+        #Si on est suffisement proche du point cible alors on passe au point suivant si la trajectoire n'est pas fini sinon on en créer une nouvelle
         if self.error_distance < 0.5 : #contrainte de proximité sur la distance pas sur l'angle
             self.indice_trajectoire+=1
             if self.indice_trajectoire >4:
