@@ -34,14 +34,6 @@
       filename="ignition-gazebo-scene-broadcaster-system"
       name="gz::sim::systems::SceneBroadcaster">
     </plugin>
-     
-     <!-- GUI Plugins -->
-    <gui>
-      <plugin name="KeyPublisher" filename="libKeyPublisher.so">
-        <!-- Optional: You can configure the topic here -->
-        <topic>/keyboard/keypress</topic>
-      </plugin>
-    </gui>
 
     <light type="directional" name="sun">
       <cast_shadows>true</cast_shadows>
