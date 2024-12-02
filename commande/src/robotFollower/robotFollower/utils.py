@@ -15,6 +15,10 @@ class Pos:
         self.y = float(y)
         self.theta = float(theta)
 
+        self.offset_x = 0.0
+        self.offset_y = 0.0
+        self.offset_theta = 0.0
+
     # return the a and b parameter of the perpendicular line of the point
     def eq_droite_perp(self):
         a = math.tan(self.theta + math.pi/2)
@@ -34,12 +38,21 @@ class Pos:
         self.y = pose.y
         self.theta = pose.theta
 
-    def update_gz(self, msg : Odometry, offset = 0):
+    def set_offset(self, offset):
+        if isinstance(offset, Pos):
+            self.offset_x = offset.x
+            self.offset_y = offset.y
+            self.offset_theta = offset.theta
+        else:
+            raise ValueError("Pos value is needed")
+        
+
+    def update_gz(self, msg : Odometry):
         quatertion_turtleFollower = msg.pose.pose.orientation
         angle_turtleFollower = quaternion_to_yaw(quatertion_turtleFollower.x, quatertion_turtleFollower.y, quatertion_turtleFollower.z, quatertion_turtleFollower.w)
-        self.x = msg.pose.pose.position.x
-        self.y = msg.pose.pose.position.y
-        self.theta = angle_turtleFollower
+        self.x = msg.pose.pose.position.x + self.offset_x
+        self.y = msg.pose.pose.position.y + self.offset_y
+        self.theta = angle_turtleFollower + self.offset_theta
 
     def __add__(self, other):
         if isinstance(other, Pos):

@@ -21,7 +21,8 @@ setup(
     entry_points={
         'console_scripts': [
             'robotFollower = robotFollower.robotFollower:main',
-            'robotLeader = robotFollower.leaderPath:main'
+            'robotLeader = robotFollower.leaderPath:main',
+            'centered_cmd = robotFollower.centered_cmd:main',
         ],
     },
 )
