@@ -11,7 +11,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
 
     # Spécifiez le chemin de votre fichier world personnalisé dans le répertoire 'worlds'
-    world_file_path = "ROS2_Project/worlds/diff_drive.sdf"
+    world_file_path = "worlds/diff_drive.sdf"
 
 
     # Lancer Gazebo avec votre fichier world personnalisé
