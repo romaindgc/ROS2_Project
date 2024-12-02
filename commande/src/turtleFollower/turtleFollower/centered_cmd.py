@@ -39,18 +39,18 @@ class node_centered_cmd(Node):
     def send_velocity_command(self):
 
         distance_center = 1
-        diff_pos = Pos(- distance_center * math.sin(self.pose_turtle1.theta), distance_center * math.cos(self.pose_turtle1.theta))
+        diff_pos = Pos(- distance_center * math.sin(self.target_pos.theta), distance_center * math.cos(self.target_pos.theta))
   
         msg = [Twist(), Twist()]
         
-        msg[0].linear.x, msg[0].angular.z = self.turtleFol1_cmd.commande(self.pose_turtleFollower1, self.target_pos + diff_pos)
-        msg[1].linear.x, msg[1].angular.z = self.turtleFol2_cmd.commande(self.pose_turtleFollower2, self.target_pos - diff_pos)
+        msg[0].linear.x, msg[0].angular.z = self.turtleFol1_cmd.commande(self.pose_turtleFollower1, self.pose_turtle1 + diff_pos)
+        msg[1].linear.x, msg[1].angular.z = self.turtleFol2_cmd.commande(self.pose_turtleFollower2, self.pose_turtle1 - diff_pos)
 
         cmd_tt = 0
         for i in range(len(msg)):
-            cmd_tt += msg[i].linear.x + msg[i].angular.z
+            cmd_tt += abs(msg[i].linear.x) + abs(msg[i].angular.z)
         
-        if cmd_tt == 0:
+        if cmd_tt <= 0:
             self.target_pos = self.trajectory.get_next_point()
 
         self.cmd_vel_turtle_follower1_pub_.publish(msg[0])

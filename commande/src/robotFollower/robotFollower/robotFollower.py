@@ -20,9 +20,7 @@ class node_robotFollower(Node):
         self.pose_follower.set_offset(Pos(-4))
 
         # Other parameters
-        self.FD = 2.5  # Target distance
         self.timer_period = 0.1  # seconds
-        self.xOffset_follower = -4
 
         # Publishers and Subscriptions
         self.pose_leader_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_leader.update_gz, 10)

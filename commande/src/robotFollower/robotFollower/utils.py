@@ -33,11 +33,7 @@ class Pos:
     def angle(self, p2):
         return math.atan2(p2.y - self.y, p2.x - self.x)
 
-    def update(self, pose : Pose):
-        self.x = pose.x
-        self.y = pose.y
-        self.theta = pose.theta
-
+    # set the value of offset using a Pos as value
     def set_offset(self, offset):
         if isinstance(offset, Pos):
             self.offset_x = offset.x
@@ -45,7 +41,12 @@ class Pos:
             self.offset_theta = offset.theta
         else:
             raise ValueError("Pos value is needed")
-        
+    
+    # 
+    def update(self, pose : Pose):
+        self.x = pose.x
+        self.y = pose.y
+        self.theta = pose.theta        
 
     def update_gz(self, msg : Odometry):
         quatertion_turtleFollower = msg.pose.pose.orientation
@@ -149,13 +150,22 @@ class PID_cmd:
 
 class Trajectory :
 
-    def __init__(self, nb_point):
+    def __init__(self, nb_point=5, mode="random"):
         #limit values for trajectory
         self.min_max = [[7.0,2.0], [7.0,2.0], [3.14,-3.14]]
         self.nb_point = nb_point
 
+        self.mode = mode
+
+        if mode == "random":
+            self.trajectory = [ Pos() for _ in range(nb_point)]
+        elif mode == "square":
+            self.trajectory = [Pos(5,0, -math.pi/4),Pos(5,-5, - 3 * math.pi/4),Pos(-5,-5, 3 * math.pi / 4),Pos(-5,0, math.pi / 4),Pos(0,0)]
+            nb_point = 5
+        else :
+            print("trajectory error")
+
         self.point_act = nb_point 
-        self.trajectory = [ Pos() for _ in range(nb_point)]
 
     def generate(self):
         for i in range(self.nb_point):
@@ -165,10 +175,12 @@ class Trajectory :
 
             self.trajectory[i] = Pos(rand_x, rand_y, rand_theta)
     
+    # return the next point of the trajectory
     def get_next_point(self):
         if self.point_act >= self.nb_point:
             self.point_act = 0
-            self.generate()
+            if self.mode == "random":
+                self.generate()
         
         self.point_act += 1
         return(self.trajectory[self.point_act - 1])
