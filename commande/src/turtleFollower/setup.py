@@ -21,7 +21,10 @@ setup(
     entry_points={
         'console_scripts': [
             'Follow = turtleFollower.Follow:main',
-            'Followetat = turtleFollower.Follow_etat:main'
+            'Followetat = turtleFollower.Follow_etat:main',
+            'centered_cmd = turtleFollower.centered_cmd:main',
+            'node_cmdTurtle1 = turtleFollower.node_cmdTurtle1:main',
+            'node_follow_trajectoire = turtleFollower.node_follow_trajectoire:main'
         ],
     },
 )
