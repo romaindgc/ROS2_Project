@@ -5,6 +5,7 @@ from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 import numpy as np
 import math
+from .utils import *
 
 class node_robotFollower(Node):
 
@@ -12,26 +13,11 @@ class node_robotFollower(Node):
         super().__init__('Follower')
 
         # Variables for the position
-        self.pose_turtle1 = [0, 0, 0, 0, 0]
-        self.pose_turtleFollower = [0, 0, 0, 0, 0]
+        self.pose_leader = Pos()
+        self.pose_follower = Pos()
 
-        # Variables for the PID
-        self.error_distance = 0
-        self.error_distance_previous = 0
-        self.error_angle = 0
-        self.error_angle_previous = 0
-
-        self.integrated_distance = 0
-        self.integrated_angle = 0
-
-        # PID Gains
-        self.Kp_distance = 1
-        self.Ki_distance = 0.01
-        self.Kd_distance = 0.2
-
-        self.Kp_angle = 1.0
-        self.Ki_angle = 0.01
-        self.Kd_angle = 0.2
+        #Setup offset follower
+        self.pose_follower.set_offset(Pos(-4))
 
         # Other parameters
         self.FD = 2.5  # Target distance
@@ -39,73 +25,22 @@ class node_robotFollower(Node):
         self.xOffset_follower = -4
 
         # Publishers and Subscriptions
-        self.pose_turtle1_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_callback_driver, 10)
-        self.pose_turtle_follower_sub = self.create_subscription(Odometry, "/model/vehicle_green/odometry", self.pose_callback_follower, 10)
+        self.pose_leader_sub = self.create_subscription(Odometry, "/model/vehicle_blue/odometry", self.pose_leader.update_gz, 10)
+        self.pose_follower_sub = self.create_subscription(Odometry, "/model/vehicle_green/odometry", self.pose_follower.update_gz, 10)
+        
         self.cmd_vel_turtle_follower_pub_ = self.create_publisher(Twist, "/model/vehicle_green/cmd_vel", 10)
 
-        self.timer_follow = self.create_timer(self.timer_period, self.followCommand)
+        self.timer_follow = self.create_timer(self.timer_period, self.send_velocity_command)
         self.get_logger().info("Shadowing started")
 
-    def pose_callback_driver(self, msg: Odometry):
-        quatertion_turtle1 = msg.pose.pose.orientation
-        angle_turtle1 = quaternion_to_yaw(quatertion_turtle1.x, quatertion_turtle1.y,quatertion_turtle1.z, quatertion_turtle1.w)
-        self.pose_turtle1 = [msg.pose.pose.position.x, msg.pose.pose.position.y, angle_turtle1]
+        #Defintion of the PID
+        self.follower_cmd = PID_cmd(self.timer_period, dist_target=1.5,dist_gain=[1.0,0.01,0.2], angle_gain=[1.0,0.01,0.2])  
 
-    def pose_callback_follower(self, msg: Odometry):
-        quatertion_turtleFollower = msg.pose.pose.orientation
-        angle_turtleFollower = quaternion_to_yaw(quatertion_turtleFollower.x, quatertion_turtleFollower.y, quatertion_turtleFollower.z, quatertion_turtleFollower.w)
-        self.pose_turtleFollower = [msg.pose.pose.position.x + self.xOffset_follower, msg.pose.pose.position.y, angle_turtleFollower]     
-
-    def send_velocity_command(self, x, y, z):
+    def send_velocity_command(self):
         msg = Twist()
-        msg.linear.x = float(x)
-        msg.linear.y = float(y)
-        msg.angular.z = float(z)
+        msg.linear.x, msg.angular.z = self.follower_cmd.commande(self.pose_follower, self.pose_leader)
         self.cmd_vel_turtle_follower_pub_.publish(msg)
 
-    def followCommand(self):
-        # Calculate errors
-        self.error_distance = norme_euclidienne(self.pose_turtle1, self.pose_turtleFollower)
-        self.error_angle = np.arctan2(self.pose_turtle1[1] - self.pose_turtleFollower[1], self.pose_turtle1[0] - self.pose_turtleFollower[0]) - self.pose_turtleFollower[2]
-        
-        # Normalize angle in [-pi,pi] for ensuring that the turtle turns in the shortest sens
-        self.error_angle = np.arctan2(np.sin(self.error_angle), np.cos(self.error_angle))
-
-        # PID for distance
-        self.integrated_distance += self.error_distance * self.timer_period
-        self.derivated_distance = (self.error_distance - self.error_distance_previous) / self.timer_period
-        linear_speed = self.Kp_distance * self.error_distance + self.Ki_distance * self.integrated_distance + self.Kd_distance * self.derivated_distance
-
-        # PID for angle
-        self.integrated_angle += self.error_angle * self.timer_period
-        self.derivated_angle = (self.error_angle - self.error_angle_previous) / self.timer_period
-        angle_speed = self.Kp_angle * self.error_angle + self.Ki_angle * self.integrated_angle + self.Kd_angle * self.derivated_angle
-
-        # Update previous errors
-        self.error_distance_previous = self.error_distance
-        self.error_angle_previous = self.error_angle
-
-        # Tolerance zone
-        tolerance = 0.1 #For avoiding perpetual oscillations, we add a tolerance to our aimed distance
-        if self.error_distance > self.FD + tolerance:
-            self.send_velocity_command(linear_speed, 0, angle_speed)
-        elif self.error_distance < self.FD - tolerance:
-            self.send_velocity_command(-linear_speed, 0, -angle_speed)
-        else:
-            self.send_velocity_command(0, 0, 0)
-        
-        # Log pour débogage
-        self.get_logger().info(f"error : dis={self.error_distance:.2f}, angle={self.error_angle:.2f}")
-        self.get_logger().info(f"Commande : v={linear_speed:.2f}, z={angle_speed:.2f}")
-        self.get_logger().info(f"Pose leader : x={self.pose_turtle1[0]:.2f}, y={self.pose_turtle1[1]:.2f}")
-        self.get_logger().info(f"Pose follower : x={self.pose_turtleFollower[0]:.2f}, y={self.pose_turtleFollower[1]:.2f}")
-
-
-def norme_euclidienne(a, b):
-    return np.sqrt((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2)
-
-def quaternion_to_yaw(qx, qy, qz, qw):
-    return math.atan2(2 * (qw * qz + qx * qy), 1 - 2 * (qy**2 + qz**2))
 
 def main(args=None):
     rclpy.init(args=args)
