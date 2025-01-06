@@ -1,0 +1,24 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/rom1/ROS2_Project/commande/install/turtleFollower/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/robotFollower/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/package_turtleFormation/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/cmd_mcar/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/my_turtle_controller/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/my_package/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/gazebo_test/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/rom1/ROS2_Project/commande/install/turtleFollower/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/robotFollower/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/package_turtleFormation/lib/python3.10/site-packages",
+        "/home/rom1/ROS2_Project/commande/install/cmd_mcar/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/my_turtle_controller/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/my_package/lib/python3.10/site-packages",
+        "/home/rom1/ros2_ws/install/gazebo_test/lib/python3.10/site-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

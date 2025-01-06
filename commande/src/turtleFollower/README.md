@@ -26,3 +26,29 @@ colcon build
 source install/setup.bash
 ros2 run turtleFollower Followetat
 ```
+
+## Run the node node_cmdTurtle1
+
+```bash
+cd ~/ROS2_Project/commande/
+colcon build
+source install/setup.bash
+ros2 run turtleFollower node_cmdTurtle1
+```
+
+## Run the node node_follow_trajectoire
+```bash
+cd ~/ROS2_Project/commande/
+colcon build
+source install/setup.bash
+ros2 run turtleFollower node_follow_trajectoire
+```
+
+## Run the node centered_cmd
+
+```bash
+cd ~/ROS2_Project/commande/
+colcon build
+source install/setup.bash
+ros2 run turtleFollower centered_cmd
+```

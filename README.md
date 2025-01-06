@@ -20,20 +20,24 @@ Check the **last section** to learn how to do it !
 
 Here find a detail of the ROS2 packages in the project :
 
-#### Package *package_turtleFormation* 
-
-* **node_cmdTurtle1.py** : bases for creating a subcriber, a publisher and how to use them for moving turtles in turtleSim  
-* **node_follow_trajectory.py** : generation of a random trajectory which is followed by a turtle
 
 #### Package *turtleFollower*
 
+* **centered_cmd** : makes two turtles following a middle point between them contained in a trajectory
 * **Follow.py** : makes a turtle following a leader turtle by using PID controllers in turtleSim
 * **Follow_etat.py** : makes two turtles following each other by using a state equation (gains to adjust) in turtleSim
+* **node_cmdTurtle1.py** : bases for creating a subcriber, a publisher and how to use them for moving turtles in turtleSim  
+* **node_follow_trajectory.py** : generation of a random trajectory which is followed by a turtle
+* **utils** : regroup all the handmade functions needed in the package
+* **README** : explain how to start the nodes of the package
 
 #### Package *robotFollower* 
 
+* **centered_cmd** : makes two robots following a middle point between them contained in a trajectory
 * **robotFollower.py** : makes a robot following a leader robot in Gazebo by using PID controllers  
 * **leaderPath.py** : makes the leader robot following a pre-defided trajectory
+* **utils** : regroup all the handmade functions needed in the package
+* **README** : explain how to start the nodes of the package
 
 # Useful commande
 
@@ -49,7 +53,7 @@ source install/setup.bash
 Then, enter the following command to start gazebo with the correct sdf file :
 
 ```bash
-ros2 launch ROS2_Project/launch/MCAR.launch.py 
+ros2 launch launch/MCAR.launch.py 
 ```
 Now that Gazebo started using the right .sdf file, you just have to start the desired nodes.
 
